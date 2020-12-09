@@ -1,15 +1,15 @@
-package main;
+package plugins;
 
+import main.PluginFunction;
 
-
-public class Suma implements PluginFunction {
+public class Potencia implements PluginFunction {
 
 	private int x,y;
 	
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return "Suma";
+		return "Potencia";
 	}
 
 	@Override
@@ -22,7 +22,10 @@ public class Suma implements PluginFunction {
 	@Override
 	public Object getResult() {
 		// TODO Auto-generated method stub
-		return x+y;
+		double x1 = x;
+		double y1 = y;
+		double result = Math.pow(x1, y1);
+		return (int) result;
 	}
 
 	@Override

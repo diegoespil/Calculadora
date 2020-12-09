@@ -1,4 +1,7 @@
-package main;
+package plugins;
+
+import main.PluginFunction;
+
 public class Resta implements PluginFunction {
 
 	private int x,y;

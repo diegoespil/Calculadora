@@ -1,6 +1,8 @@
-package main;
+package plugins;
 
 import java.text.DecimalFormat;
+
+import main.PluginFunction;
 
 public class Division implements PluginFunction {
 

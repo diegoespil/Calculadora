@@ -34,6 +34,7 @@ public class Gui extends JFrame {
 	private JButton btnUpdate;
 	private JButton btnEqual;
 	private	List<PluginFunction> plugins;
+	private List<PluginFunction> aux;
 	
 
 	/**
@@ -59,6 +60,7 @@ public class Gui extends JFrame {
 	public Gui(String [] args) {
 		
 		plugins = new ArrayList<PluginFunction>();
+		aux = new ArrayList<PluginFunction>();
 		getPlugins();
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -89,9 +91,12 @@ public class Gui extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				vaciarListado();
 				getPlugins();
-				
+				loadComboBox();
 			}
+
+			
 			
 		});
 		contentPane.add(btnUpdate);
@@ -122,7 +127,17 @@ public class Gui extends JFrame {
 		contentPane.add(btnEqual);
 		
 		loadComboBox();
-		runPlugins();
+		
+	}
+	
+	private void vaciarListado() {
+		for (PluginFunction pf : plugins) {
+			aux.add(pf);
+		}
+		for (PluginFunction pfEliminar : aux) {
+			plugins.add(pfEliminar);
+		}
+		
 	}
 	
 	public static boolean isNumeric(String strNum) {
@@ -175,12 +190,13 @@ public class Gui extends JFrame {
 					if (! files[i].endsWith(".class"))
 						continue;
 					System.out.println("file "+files[i].substring(0, files[i].indexOf(".")));
-					Class c = cl.loadClass(files[i].substring(0, files[i].indexOf(".")));
+					Class c = cl.loadClass("plugins."+files[i].substring(0, files[i].indexOf(".")));
 					Class[] intf = c.getInterfaces();
 					
 					for (int j=0; j<intf.length; j++) {
 						System.out.println("interfaces "+intf[j].getName());
-						if (intf[j].getName().equals("PluginFunction")) {
+						if (intf[j].getName().equals("main.PluginFunction")) {
+							System.out.println("equals PluginFunction");
 							// the following line assumes that PluginFunction has a no-argument constructor
 							PluginFunction pf = (PluginFunction) c.newInstance();
 							plugins.add(pf);
@@ -191,32 +207,6 @@ public class Gui extends JFrame {
 					System.out.println(ex.getMessage());
 					System.err.println("File " + files[i] + " does not contain a valid PluginFunction class.");
 				}
-			}
-		}
-	}
-
-	protected void runPlugins() {
-		int count = 1;
-		Iterator iter = plugins.iterator();
-		while (iter.hasNext()) {
-			PluginFunction pf = (PluginFunction) iter.next();
-			try {
-				
-				pf.setParameter(3,2);
-				System.out.print(pf.toString());
-				System.out.print(" ( "+count+" ) = ");
-				if (pf.hasError()) {
-					System.out.println("there was an error during plugin initialization");
-					continue;
-				}
-				Object result = pf.getResult();
-				if (pf.hasError())
-					System.out.println("there was an error during plugin execution");
-				else
-					System.out.println(result);
-				count++;
-			} catch (SecurityException secEx) {
-				System.err.println("plugin '"+pf.getClass().getName()+"' tried to do something illegal");
 			}
 		}
 	}
